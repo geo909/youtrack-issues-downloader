@@ -1,0 +1,4 @@
+.env
+exports
+__pycache__
+.python-version
