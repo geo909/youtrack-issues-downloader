@@ -6,13 +6,13 @@ import time
 
 
 # User configuration:
-PROJECT_ID = "FH"
 ID_PAD_LENGTH = 3  # Pads issue numbers for folder names, ensuring order. Increase if >999 issues in your project.
 # User configuration ends
 
 load_dotenv()
 YOUTRACK_TOKEN = os.getenv("YOUTRACK_TOKEN")
-BASE_YOUTRACK_URL = "https://ferryhoppers.myjetbrains.com"
+PROJECT_ID = os.getenv("YOUTRACK_PROJECT_ID")
+BASE_YOUTRACK_URL = os.getenv("YOUTRACK_URL")
 
 
 def clean_folder_name(

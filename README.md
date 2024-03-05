@@ -19,16 +19,18 @@ First, you need to install the required dependencies using pip:
 pip install -r requirements.txt
 ```
 
-Before running the script, you need to configure the following variables at the top of the `main.py` file:
-
-- `PROJECT_ID`: The ID of the YouTrack project you want to download issues from.
-- `ID_PAD_LENGTH`: This pads issue numbers for folder names, ensuring order. Increase if there are more than 999 issues in your project.
-
 You also need to set up a `.env` file in the same directory as your `main.py` file with the following variable:
 
 - `YOUTRACK_TOKEN`: Your YouTrack permanent token. This is used for authentication when making requests to the YouTrack API.
+- `YOUTRACK_PROJECT_ID`: The ID of the YouTrack project you want to download issues from.
+- `YOUTRACK_URL`: The source
 
 To do this, copy `.env.template` to `.env` and fill in your YouTrack permanent token.
+
+Optional config variables at the top of the `main.py` file:
+
+- `ID_PAD_LENGTH`: This pads issue numbers for folder names, ensuring order. Increase if there are more than 999 issues in your project.
+
 
 ## Usage
 
