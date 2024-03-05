@@ -19,16 +19,18 @@ First, you need to install the required dependencies using pip:
 pip install -r requirements.txt
 ```
 
-Before running the script, you need to configure the following variables at the top of the `main.py` file:
-
-- `PROJECT_ID`: The ID of the YouTrack project you want to download issues from.
-- `ID_PAD_LENGTH`: This pads issue numbers for folder names, ensuring order. Increase if there are more than 999 issues in your project.
-
 You also need to set up a `.env` file in the same directory as your `main.py` file with the following variable:
 
 - `YOUTRACK_TOKEN`: Your YouTrack permanent token. This is used for authentication when making requests to the YouTrack API.
+- `YOUTRACK_PROJECT_ID`: The ID of the YouTrack project you want to download issues from.
+- `YOUTRACK_URL`: The source
 
 To do this, copy `.env.template` to `.env` and fill in your YouTrack permanent token.
+
+Optional config variables at the top of the `main.py` file:
+
+- `ID_PAD_LENGTH`: This pads issue numbers for folder names, ensuring order. Increase if there are more than 999 issues in your project.
+- `EXTENSION`: The file extension to use for attachments. For text-based projects, you can use "txt" or "md", but for projects with rich text, you may want to use "html".
 
 ## Usage
 
@@ -50,3 +52,9 @@ get_issues(permanent_token, project_id=PROJECT_ID, full_refresh=True)
 The script will create a directory named `exports` in the same directory as the `main.py` file. 
 Inside this directory, it will create a separate directory for each issue, named with the issue's ID and summary. 
 Each issue directory will contain a `content.txt` file with the issue's details and comments, and any attachments the issue may have.
+
+## Filtering
+If you have a customfield that disects something, you can narrow the list down
+```
+find -maxdepth 1 -execdir grep -qri 'fieldname:.*fieldvalue' {}  \; -print
+```
