@@ -52,3 +52,9 @@ get_issues(permanent_token, project_id=PROJECT_ID, full_refresh=True)
 The script will create a directory named `exports` in the same directory as the `main.py` file. 
 Inside this directory, it will create a separate directory for each issue, named with the issue's ID and summary. 
 Each issue directory will contain a `content.txt` file with the issue's details and comments, and any attachments the issue may have.
+
+## Filtering
+If you have a customfield that disects something, you can narrow the list down
+```
+find -maxdepth 1 -execdir grep -qri 'fieldname:.*fieldvalue' {}  \; -print
+```
