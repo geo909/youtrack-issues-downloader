@@ -8,6 +8,7 @@ import time
 # User configuration:
 PROJECT_ID = "Data requests"
 ID_PAD_LENGTH = 3  # Pads issue numbers for folder names, ensuring order. Increase if >999 issues in your project.
+EXTENSION = "txt" # Use "html" for the spaces that use rich text formatting
 # User configuration ends
 
 load_dotenv()
@@ -127,7 +128,7 @@ def get_issues(permanent_token: str, project_id: str, full_refresh: bool = False
         os.makedirs(issue_target_path, exist_ok=True)
 
         # Save issue details
-        with open(os.path.join(issue_target_path, "content.txt"), "w") as f:
+        with open(os.path.join(issue_target_path, f"content.{EXTENSION}"), "w") as f:
             f.write(f"# {issue_id} - {issue['summary']}\n\n")
             f.write(f"{issue.get('description', 'No description')}\n\n")
             f.write(f"\n# Comments")
