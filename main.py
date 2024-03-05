@@ -107,12 +107,32 @@ def get_issues(permanent_token: str, project_id: str, full_refresh: bool = False
     }
     issues_endpoint = f"{BASE_YOUTRACK_URL}/youtrack/api/issues"
 
-    response = requests.get(issues_endpoint, headers=headers, params={**params})
-    if response.status_code != 200:
-        print("Failed to fetch issues:", response.text)
-        return
-    issues = response.json()
+    doing = 1
+    offset = 0
+    pace = 50
+    while doing:
+      pagpar = {
+        "$top": pace,
+        "$skip": offset
+      }
+      offset += pace
+      allpar = params | pagpar
+      print(f"Calling get issues for page offset={offset} pace={pace}")
+      response = requests.get(issues_endpoint, headers=headers, params=allpar)
+      if response.status_code != 200:
+          print("Failed to fetch issues:", response.text)
+          return
+      issues = response.json()
 
+      if (len(issues) <1):
+        print("End of the list")
+        doing = 0
+
+      proc_issues(issues, full_refresh, headers);
+
+
+
+def proc_issues(issues, full_refresh: bool, headers):
     for issue in issues:
         issue_id = issue["idReadable"]
         issue_number_in_project = issue["numberInProject"]
