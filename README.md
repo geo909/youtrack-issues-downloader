@@ -12,6 +12,7 @@ The issues are saved in a local directory structure with the ticket ID and subje
 
 ## Preliminaries
 
+*Note:* Like any other python script, it is optional but recommended to run this script in a python virtual environment.
 
 First, you need to install the required dependencies using pip:
 
@@ -25,9 +26,9 @@ You also need to set up a `.env` file in the same directory as your `main.py` fi
 - `YOUTRACK_PROJECT_ID`: The ID of the YouTrack project you want to download issues from.
 - `YOUTRACK_URL`: The source
 
-To do this, copy `.env.template` to `.env` and fill in your YouTrack permanent token.
+To facilitate the process, you can simply copy `.env.template` to `.env` and fill in the values for the above.
 
-Optional config variables at the top of the `main.py` file:
+You can also add optional configuration by tweaking the following variables at the top of the `main.py` file:
 
 - `ID_PAD_LENGTH`: This pads issue numbers for folder names, ensuring order. Increase if there are more than 999 issues in your project.
 - `EXTENSION`: The file extension to use for attachments. For text-based projects, you can use "txt" or "md", but for projects with rich text, you may want to use "html".
@@ -54,7 +55,7 @@ Inside this directory, it will create a separate directory for each issue, named
 Each issue directory will contain a `content.txt` file with the issue's details and comments, and any attachments the issue may have.
 
 ## Filtering
-If you have a customfield that disects something, you can narrow the list down
+If you have a custom field that disects something, you can narrow the list down
 ```
 find -maxdepth 1 -execdir grep -qri 'fieldname:.*fieldvalue' {}  \; -print
 ```
