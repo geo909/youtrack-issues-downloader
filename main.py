@@ -6,7 +6,7 @@ import time
 
 
 # User configuration:
-PROJECT_ID = "Data requests"
+PROJECT_ID = "FH"
 ID_PAD_LENGTH = 3  # Pads issue numbers for folder names, ensuring order. Increase if >999 issues in your project.
 # User configuration ends
 
@@ -86,6 +86,11 @@ def download_attachments(attachments, issue_id, headers):
                 for chunk in response.iter_content(1024):
                     f.write(chunk)
 
+def format_yt_time(atime):
+   timestamp_obj = datetime.fromtimestamp(
+       atime / 1000, tz=timezone.utc
+   )
+   return timestamp_obj.isoformat(timespec="seconds")
 
 def get_issues(permanent_token: str, project_id: str, full_refresh: bool = False):
     """Download all tickets for a given project, including descriptions, comments, and attachments.
@@ -97,7 +102,7 @@ def get_issues(permanent_token: str, project_id: str, full_refresh: bool = False
     """
     headers = {"Authorization": f"Bearer {permanent_token}"}
     params = {
-        "fields": "idReadable,numberInProject,summary,created,description,wikifiedDescription,comments(author(name),created,deleted,text,reactions(author(name),reaction)),attachments(name,url),project(id,shortName)",
+        "fields": "idReadable,numberInProject,summary,created,updated,description,wikifiedDescription,comments(author(name),created,deleted,text,reactions(author(name),reaction)),attachments(name,url),project(id,shortName),tags(name),customFields(name,value(name))",
         "query": f"project:{{{project_id}}} sort by: {{issue id}} desc",
     }
     issues_endpoint = f"{BASE_YOUTRACK_URL}/youtrack/api/issues"
@@ -128,14 +133,26 @@ def get_issues(permanent_token: str, project_id: str, full_refresh: bool = False
 
         # Save issue details
         with open(os.path.join(issue_target_path, "content.txt"), "w") as f:
-            f.write(f"# {issue_id} - {issue['summary']}\n\n")
-            f.write(f"{issue.get('description', 'No description')}\n\n")
-            f.write(f"\n# Comments")
+            f.write(f"# {issue_id} - {issue['summary']}\n")
+            icreated = format_yt_time(issue["created"]) if ("created" in issue) else "-"
+            iupdated = format_yt_time(issue["updated"]) if ("updated" in issue) else "-"
+            f.write(f"\nCreated: {icreated}\nUpdated: {iupdated}\n")
+            if "tags" in issue and issue["tags"]:
+              f.write("\nTAGS:\n");
+              for tag in issue["tags"]:
+                f.write(f"- {tag}\n");
+
+            if "customFields" in issue and issue["customFields"]:
+              f.write("\nCUSTOM FIELDS:\n");
+              for field in issue["customFields"]:
+                fname = field.get('name') or "-"
+                fval = field.get('value')
+                f.write(f"- {fname}: {fval}\n")
+
+            f.write(f"\n---\n{issue.get('description', 'No description')}\n\n")
+            f.write(f"\n---\n# Comments")
             for comment in issue.get("comments", []):
-                comment_timestamp_obj = datetime.fromtimestamp(
-                    comment["created"] / 1000, tz=timezone.utc
-                )
-                comment_timestamp = comment_timestamp_obj.isoformat(timespec="seconds")
+                comment_timestamp = format_yt_time(comment["created"]) if 'created' in comment else "-";
                 comment_section_title = (
                     f"Comment by {comment['author']['name']} at {comment_timestamp}"
                 )
@@ -155,4 +172,4 @@ def get_issues(permanent_token: str, project_id: str, full_refresh: bool = False
 
 if __name__ == "__main__":
     permanent_token = YOUTRACK_TOKEN
-    get_issues(permanent_token, project_id=PROJECT_ID, full_refresh=False)
+    get_issues(permanent_token, project_id=PROJECT_ID, full_refresh=True)
