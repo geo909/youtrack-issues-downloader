@@ -172,4 +172,4 @@ def get_issues(permanent_token: str, project_id: str, full_refresh: bool = False
 
 if __name__ == "__main__":
     permanent_token = YOUTRACK_TOKEN
-    get_issues(permanent_token, project_id=PROJECT_ID, full_refresh=True)
+    get_issues(permanent_token, project_id=PROJECT_ID, full_refresh=False)
